@@ -24,37 +24,57 @@ const Details = () => {
 
       <Form
         onSubmit={onSubmit}
+        validate= {values => {
+          const errors = {}
+          if (!values.name) {
+            errors.name = 'Required'
+          }
+          if (values.price <= 0) {
+            errors.price = 'Price must be higher than 0'
+          }
+          if (values.description?.length > 200) {
+            errors.description = 'Maximum 200 characters'
+          }
+          return errors
+        }}
         initialValues=
           {{ 
             name: store.displayedProduct.name, 
             description: store.displayedProduct.description, 
-            price: store.displayedProduct.price 
+            price: store.displayedProduct.price,
+            id: store.displayedProduct.id
           }}
-        render={({ handleSubmit, form, submitting, pristine, values }) => (
+        render={({ handleSubmit, form, submitting, pristine, values, invalid }) => (
           <form>
             <Grid flexDirection={'column'}>
-              <Typography>Name</Typography>
-              <Field
-                name="name"
-                component="input"
-                type="text"
-                placeholder="Name"
-              />
-              <Typography>Description</Typography>
-              <Field
-                name="description"
-                component="input"
-                type="text"
-                placeholder="Description"
-              />
-              <Typography>Price</Typography>
-              <Field
-                name="price"
-                component="input"
-                type="number"
-                placeholder="Price"
-              />
-              <Button onClick={() => dispatch(setProductValues(values))}>
+              <Field name="name">
+                {({ input, meta }) => (
+                  <Grid display={'flex'} flexDirection={'column'}>
+                      <label>Name</label>
+                      <CustomInput {...input} type="text" placeholder="Name" />
+                      {meta.error && meta.touched && <ErrorMessage>{meta.error}</ErrorMessage>}
+                  </Grid>
+                )} 
+              </Field>
+              <Field name="description"> 
+                {({ input, meta }) => (
+                  <Grid display={'flex'} flexDirection={'column'}>
+                      <label>Description</label>
+                      <CustomInput {...input} type="text" placeholder="Description" />
+                      {meta.error && meta.touched && <ErrorMessage>{meta.error}</ErrorMessage>}
+                  </Grid>
+                )} 
+              </Field>
+              <Field name="price">
+                {({ input, meta }) => (
+                  <Grid display={'flex'} flexDirection={'column'}>
+                      <label>Price</label>
+                      <CustomInput {...input} type="number" />
+                      {meta.error && meta.touched && <ErrorMessage>{meta.error}</ErrorMessage>}
+                  </Grid>
+                )} 
+              </Field>
+              <Button disabled={invalid} onClick={() => dispatch(setProductValues(values))}>
                 Save
               </Button>
             </Grid>
@@ -64,6 +84,18 @@ const Details = () => {
     </Grid>
   )
 };
+
+const ErrorMessage = styled.span`
+  color: red;
+`
+
+const CustomInput = styled.textarea`
+  font-family: inherit;
+  font-size: inherit;
+  height: 15vh;
+  resize: none;
+  width: 60%;
+`
 
 Details.propTypes = {};
 

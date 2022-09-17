@@ -44,7 +44,7 @@ const initialState = {
 
 const reducer = createReducer(initialState, {
   [addProduct]: (state, action) => {
-    return {...state, displayedProduct: {}};
+    return {...state, displayedProduct: {name: "", description: "", price: 0}};
   },
   [removeProduct]: (state, action) => {
     const removedProduct = action.payload.id;
@@ -57,8 +57,13 @@ const reducer = createReducer(initialState, {
   },
   [setProductValues]: (state, action) => {
     let newLoadedProducts = [...state.loadedProducts];
-    newLoadedProducts.push({id: newLoadedProducts.length-1, ...action.payload, creation_date: moment().format("DD/MM/YYYY")});
-    return {...state, loadedProducts: newLoadedProducts}
+    if (typeof state.displayedProduct.id === "undefined") {
+      newLoadedProducts.push({id: newLoadedProducts.length, ...action.payload, creation_date: moment().format("DD/MM/YYYY")}) 
+      return {...state, loadedProducts: newLoadedProducts, displayedProduct: newLoadedProducts[newLoadedProducts.length-1]}
+    } else {
+      newLoadedProducts[newLoadedProducts.findIndex((p) => p.id === action.payload.id)] = action.payload;
+      return {...state, loadedProducts: newLoadedProducts, displayedProduct: newLoadedProducts[state.displayedProduct.id]}
+    } 
   }
 });
 
