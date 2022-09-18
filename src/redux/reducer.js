@@ -1,24 +1,43 @@
 import { createReducer } from "@reduxjs/toolkit";
 import moment from "moment/moment";
-import { addProduct, removeProduct, selectProduct, setProductValues, sortProducts } from "./actions";
+import { addProduct, removeProduct, searchProducts, selectProduct, setProductValues, sortProducts } from "./actions";
 
 function compareDesc( a, b ) {
-  console.log("desc");
-  if ( a.name < b.name ){
+  if ( a.name.toUpperCase() < b.name.toUpperCase() ){ // USING toUppercase() BC STRING COMPARISON IS CASE SENSITIVE
     return -1;
   }
-  if ( a.name > b.name ){
+  if ( a.name.toUpperCase() > b.name.toUpperCase() ){
     return 1;
   }
   return 0;
 }
 
 function compareAsc( a, b ) {
-  console.log("asc");
-  if ( a.name > b.name ){
+  if ( a.name.toUpperCase() > b.name.toUpperCase() ){
     return -1;
   }
-  if ( a.name < b.name ){
+  if ( a.name.toUpperCase() < b.name.toUpperCase() ){
+    return 1;
+  }
+  return 0;
+}
+
+function compareDateDesc( a, b ) {
+  console.log(moment(b.creation_date).toDate());
+  if (moment(a.creation_date).toDate() < moment(b.creation_date).toDate()){
+    return -1;
+  }
+  if (moment(a.creation_date).toDate() > moment(b.creation_date).toDate()){
+    return 1;
+  }
+  return 0;
+}
+
+function compareDateAsc( a, b ) {
+  if (moment(a.creation_date).toDate() > moment(b.creation_date).toDate()){
+    return -1;
+  }
+  if (moment(a.creation_date).toDate() < moment(b.creation_date).toDate()){
     return 1;
   }
   return 0;
@@ -31,7 +50,7 @@ const initialState = {
     name: "Ethics", 
     description: "This is a famous book written by Baruch Spinoza", 
     price: 500, 
-    creation_date: moment().format('01/09/2020')
+    creation_date: moment("01/09/2020", "DD/MM/YYYY")
   },
   loadedProducts: [
     {
@@ -39,28 +58,28 @@ const initialState = {
       name: "Ethics", 
       description: "This is a famous book written by Baruch Spinoza", 
       price: 500, 
-      creation_date: moment().format('05/10/2021')
+      creation_date: moment("05/10/2021", "DD/MM/YYYY")
     },
     {
       id: 1, 
       name: "Sapiens", 
       description: "Sapiens, the book, takes us on a breath-taking ride through our entire human history", 
       price: 500, 
-      creation_date: moment().format('23/7/2020')
+      creation_date: moment("20/7/2020", "DD/MM/YYYY")
     },
     {
       id: 2, 
       name: "Harry Potter and the Chamber of Secrets", 
       description: "Harry Potter and the Chamber of Secrets is a fantasy novel written by British author J. K. Rowling", 
       price: 700, 
-      creation_date: moment().format('01/09/2022')
+      creation_date: moment("01/09/2022", "DD/MM/YYYY")
     },
     {
       id: 3, 
       name: "Messi: The Biography", 
       description: "The story of one of the greatest footballers of all time, Lionel Messi.", 
       price: 1000, 
-      creation_date: moment().format('01/09/1992')
+      creation_date: moment("01/09/1992", "DD/MM/YYYY")
     },
   ]
 }
@@ -81,7 +100,7 @@ const reducer = createReducer(initialState, {
   [setProductValues]: (state, action) => {
     let newLoadedProducts = [...state.loadedProducts];
     if (typeof state.displayedProduct.id === "undefined") {
-      newLoadedProducts.push({id: newLoadedProducts.length, ...action.payload, creation_date: moment().format("DD/MM/YYYY")}) 
+      newLoadedProducts.push({...action.payload, id: newLoadedProducts.length, creation_date: moment()}) 
       return {...state, loadedProducts: newLoadedProducts, displayedProduct: newLoadedProducts[newLoadedProducts.length-1]}
     } else {
       newLoadedProducts[newLoadedProducts.findIndex((p) => p.id === action.payload.id)] = action.payload;
@@ -89,14 +108,34 @@ const reducer = createReducer(initialState, {
     } 
   },
   [sortProducts]: (state, action) => {
-    let newOrderBy = action.payload;
-    let newLoadedProducts = [...state.loadedProducts];
-    if (newOrderBy === 'Name DESC') {
-      newLoadedProducts.sort(compareDesc);
-    } else if (newOrderBy = 'Name ASC') {
-      newLoadedProducts.sort(compareAsc);
+    const newOrderBy = action.payload;
+    const newLoadedProducts = [...state.loadedProducts];
+    switch (newOrderBy) {
+      case 'Name DESC':
+        newLoadedProducts.sort(compareDesc);
+        break;
+      case 'Name ASC':
+        newLoadedProducts.sort(compareAsc);
+        break;
+      case 'Creation Date DESC':
+        newLoadedProducts.sort(compareDateDesc);
+        break;
+      case 'Creation Date ASC':
+        newLoadedProducts.sort(compareDateAsc);
+        break;
+      default:
+        break;
     }
     return {orderBy: newOrderBy, ...state, loadedProducts: newLoadedProducts};
+  },
+  [searchProducts]: (state, action) => {
+    let newLoadedProducts = [...state.loadedProducts];
+    if (action.payload !== "") {
+      newLoadedProducts = newLoadedProducts.filter((p) => p.name.toLowerCase().includes(action.payload));
+    } else {
+      newLoadedProducts = [...state.loadedProducts];
+    }
+    return {...state, loadedProducts: newLoadedProducts};
   }
 });
 
