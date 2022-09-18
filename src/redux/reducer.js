@@ -1,8 +1,31 @@
 import { createReducer } from "@reduxjs/toolkit";
 import moment from "moment/moment";
-import { addProduct, removeProduct, selectProduct, setProductValues } from "./actions";
+import { addProduct, removeProduct, selectProduct, setProductValues, sortProducts } from "./actions";
+
+function compareDesc( a, b ) {
+  console.log("desc");
+  if ( a.name < b.name ){
+    return -1;
+  }
+  if ( a.name > b.name ){
+    return 1;
+  }
+  return 0;
+}
+
+function compareAsc( a, b ) {
+  console.log("asc");
+  if ( a.name > b.name ){
+    return -1;
+  }
+  if ( a.name < b.name ){
+    return 1;
+  }
+  return 0;
+}
 
 const initialState = {
+  orderBy: '',
   displayedProduct: {
     id: 0, 
     name: "Ethics", 
@@ -64,6 +87,16 @@ const reducer = createReducer(initialState, {
       newLoadedProducts[newLoadedProducts.findIndex((p) => p.id === action.payload.id)] = action.payload;
       return {...state, loadedProducts: newLoadedProducts, displayedProduct: newLoadedProducts[state.displayedProduct.id]}
     } 
+  },
+  [sortProducts]: (state, action) => {
+    let newOrderBy = action.payload;
+    let newLoadedProducts = [...state.loadedProducts];
+    if (newOrderBy === 'Name DESC') {
+      newLoadedProducts.sort(compareDesc);
+    } else if (newOrderBy = 'Name ASC') {
+      newLoadedProducts.sort(compareAsc);
+    }
+    return {orderBy: newOrderBy, ...state, loadedProducts: newLoadedProducts};
   }
 });
 
