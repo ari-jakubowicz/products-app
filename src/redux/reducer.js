@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 import moment from "moment/moment";
 import { addProduct, removeProduct, searchProducts, selectProduct, setProductValues, sortProducts } from "./actions";
 
-function compareDesc( a, b ) {
+function compareName( a, b ) {
   if ( a.name.toUpperCase() < b.name.toUpperCase() ){ // USING toUppercase() BC STRING COMPARISON IS CASE SENSITIVE
     return -1;
   }
@@ -12,28 +12,8 @@ function compareDesc( a, b ) {
   return 0;
 }
 
-function compareAsc( a, b ) {
-  if ( a.name.toUpperCase() > b.name.toUpperCase() ){
-    return -1;
-  }
-  if ( a.name.toUpperCase() < b.name.toUpperCase() ){
-    return 1;
-  }
-  return 0;
-}
-
-function compareDateDesc( a, b ) {
+function compareDate( a, b ) {
   console.log(moment(b.creation_date).toDate());
-  if (moment(a.creation_date).toDate() < moment(b.creation_date).toDate()){
-    return -1;
-  }
-  if (moment(a.creation_date).toDate() > moment(b.creation_date).toDate()){
-    return 1;
-  }
-  return 0;
-}
-
-function compareDateAsc( a, b ) {
   if (moment(a.creation_date).toDate() > moment(b.creation_date).toDate()){
     return -1;
   }
@@ -81,6 +61,13 @@ const initialState = {
       price: 1000, 
       creation_date: moment("01/09/1992", "DD/MM/YYYY")
     },
+    {
+      id: 4, 
+      name: "Another Book", 
+      description: "The story of one of the greatest footballers of all time, Lionel Messi.", 
+      price: 1000, 
+      creation_date: moment("7/10/2022", "DD/MM/YYYY")
+    },
   ]
 }
 
@@ -110,22 +97,12 @@ const reducer = createReducer(initialState, {
   [sortProducts]: (state, action) => {
     const newOrderBy = action.payload;
     const newLoadedProducts = [...state.loadedProducts];
-    switch (newOrderBy) {
-      case 'Name DESC':
-        newLoadedProducts.sort(compareDesc);
-        break;
-      case 'Name ASC':
-        newLoadedProducts.sort(compareAsc);
-        break;
-      case 'Creation Date DESC':
-        newLoadedProducts.sort(compareDateDesc);
-        break;
-      case 'Creation Date ASC':
-        newLoadedProducts.sort(compareDateAsc);
-        break;
-      default:
-        break;
+    if (newOrderBy === 'name') {
+      newLoadedProducts.sort(compareName);
+    } else if (newOrderBy === 'recently_added') {
+      newLoadedProducts.sort(compareDate);
     }
+    
     return {orderBy: newOrderBy, ...state, loadedProducts: newLoadedProducts};
   },
   [searchProducts]: (state, action) => {
