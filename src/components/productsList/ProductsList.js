@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { List, ListItem, ListItemButton, ListItemText, Button, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, Select, MenuItem, InputLabel, FormControl, TablePagination, TextField } from '@mui/material';
-import { removeProduct, selectProduct, sortProducts } from '../../redux/actions';
+import { addProduct, removeProduct, selectProduct, sortProducts } from '../../redux/actions';
 import styled from 'styled-components';
 
 const ProductsList = () => {
@@ -44,15 +44,18 @@ const ProductsList = () => {
 
   return(
     <>
-      <TextField id="search" value={searched} onChange={handleSearchChange}></TextField>
-      <FormControl sx={{width: "20vw"}} size="small">
-        <InputLabel id="sort-by-label">Sort by</InputLabel>
-        <Select labelId="sort-by-label" id="sort-by" label="Sort by" value={sortBy} onChange={handleSortSelection}>
-          <MenuItem value={'none'}>None</MenuItem>
-          <MenuItem value={'name'}>Name</MenuItem>
-          <MenuItem value={'recently_added'}>Recently Added</MenuItem>
-        </Select>
-      </FormControl>
+      <TableNavBar>
+        <Button color="success" variant="contained" onClick={() => dispatch(addProduct(store))}> ADD </Button>
+        <TextField size="small" placeholder='search products' id="search" value={searched} onChange={handleSearchChange}></TextField>
+        <FormControl sx={{width: "20vw"}} size="small">
+          <InputLabel id="sort-by-label">Sort by</InputLabel>
+          <Select labelId="sort-by-label" id="sort-by" label="Sort by" value={sortBy} onChange={handleSortSelection}>
+            <MenuItem value={'none'}>None</MenuItem>
+            <MenuItem value={'name'}>Name</MenuItem>
+            <MenuItem value={'recently_added'}>Recently Added</MenuItem>
+          </Select>
+        </FormControl>
+      </TableNavBar>
       <TableContainer>
         <Table size="small">
           <TableBody>
@@ -65,10 +68,8 @@ const ProductsList = () => {
                       <img style={{height: '40px', width: '50px'}} src='placeholder.png'></img>
                     </TableCell>
                     <TableCell>
-                      <Typography> {p.name} </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography> {p.creation_date?.toString()} </Typography>
+                      <Typography sx={{ fontWeight: 'bold' }}> {p.name} </Typography>
+                      <Typography variant='h8'> {p.description} </Typography>
                     </TableCell>
                     <TableCell>
                       <Button onClick={(event) => {
@@ -99,5 +100,11 @@ const ProductsList = () => {
 ProductsList.propTypes = {};
 
 ProductsList.defaultProps = {};
+
+const TableNavBar = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+`
 
 export default ProductsList;

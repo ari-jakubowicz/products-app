@@ -14,14 +14,7 @@ const Details = () => {
   const onSubmit = () => (console.log("submit"));
   return(
     <Grid container flexDirection={'column'}>
-      <h3>Details</h3>
-      {/* <TextField required id="name" label="Name" defaultValue={store.displayedProduct.name}>
-      </TextField>
-      <TextField id="description" label="Description" defaultValue={store.displayedProduct.description}>
-      </TextField>
-      <TextField required id="price" label="Price" defaultValue={store.displayedProduct.price}>
-      </TextField> */}
-
+      <Typography variant='h5'>Product Details</Typography>
       <Form
         onSubmit={onSubmit}
         validate= {values => {
@@ -74,7 +67,7 @@ const Details = () => {
                   </Grid>
                 )} 
               </Field>
-              <Button disabled={invalid} onClick={() => dispatch(setProductValues(values))}>
+              <Button disabled={invalid} variant='contained' onClick={() => dispatch(setProductValues(values))}>
                 Save
               </Button>
             </Grid>
@@ -94,7 +87,6 @@ const CustomInput = styled.textarea`
   font-size: inherit;
   height: 15vh;
   resize: none;
-  width: 60%;
 `
 
 Details.propTypes = {};
