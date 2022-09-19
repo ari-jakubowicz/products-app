@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import moment from "moment/moment";
-import { addProduct, initializeShownProducts, removeProduct, searchProducts, selectProduct, setProductValues, sortProducts } from "./actions";
+import { addProduct, removeProduct, searchProducts, selectProduct, setProductValues, sortProducts } from "./actions";
 
 function compareName( a, b ) {
   if ( a.name.toUpperCase() < b.name.toUpperCase() ){ // USING toUppercase() BC STRING COMPARISON IS CASE SENSITIVE
@@ -73,7 +73,7 @@ const initialState = {
     {
       id: 4, 
       name: "Another Book", 
-      description: "The story of one of the greatest footballers of all time, Lionel Messi.", 
+      description: "Great book called Another Book", 
       price: 1000, 
       creation_date: moment("7/10/2022", "DD/MM/YYYY")
     },

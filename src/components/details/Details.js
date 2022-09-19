@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { List, ListItem, ListItemButton, ListItemText, Button, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, Input, TextField } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 import { Field, Form } from 'react-final-form';
-import { addProduct, setProductValues } from '../../redux/actions';
+import { setProductValues } from '../../redux/actions';
 
 const Details = () => {
   const store = useSelector((store) => {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { List, ListItem, ListItemButton, ListItemText, Button, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, Select, MenuItem, InputLabel, FormControl, TablePagination, TextField } from '@mui/material';
+import { Button, TableContainer, Table, TableRow, TableCell, TableBody, Typography, Select, MenuItem, InputLabel, FormControl, TablePagination, TextField } from '@mui/material';
 import { addProduct, removeProduct, selectProduct, sortProducts } from '../../redux/actions';
 import styled from 'styled-components';
 
@@ -36,11 +35,6 @@ const ProductsList = () => {
     });
     setShownProducts([...filteredRows]);
   };
-
-  // const cancelSearch = () => {
-  //   setSearched("");
-  //   requestSearch(searched);
-  // };
 
   return(
     <>

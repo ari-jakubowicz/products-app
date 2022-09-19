@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import { List, ListItem, ListItemButton, ListItemText, Button, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField } from '@mui/material';
+import { Grid } from '@mui/material';
 import ProductsList from '../productsList/ProductsList';
 import Details from '../details/Details';
 
