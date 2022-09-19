@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import moment from "moment/moment";
-import { addProduct, removeProduct, searchProducts, selectProduct, setProductValues, sortProducts } from "./actions";
+import { addProduct, initializeShownProducts, removeProduct, searchProducts, selectProduct, setProductValues, sortProducts } from "./actions";
 
 function compareName( a, b ) {
   if ( a.name.toUpperCase() < b.name.toUpperCase() ){ // USING toUppercase() BC STRING COMPARISON IS CASE SENSITIVE
@@ -13,11 +13,20 @@ function compareName( a, b ) {
 }
 
 function compareDate( a, b ) {
-  console.log(moment(b.creation_date).toDate());
   if (moment(a.creation_date).toDate() > moment(b.creation_date).toDate()){
     return -1;
   }
   if (moment(a.creation_date).toDate() < moment(b.creation_date).toDate()){
+    return 1;
+  }
+  return 0;
+}
+
+function compareDefault( a, b ) {
+  if ( a.id < b.id ){ 
+    return -1;
+  }
+  if ( a.id > b.id ){
     return 1;
   }
   return 0;
@@ -68,7 +77,8 @@ const initialState = {
       price: 1000, 
       creation_date: moment("7/10/2022", "DD/MM/YYYY")
     },
-  ]
+  ],
+  shownProducts: []
 }
 
 const reducer = createReducer(initialState, {
@@ -101,6 +111,8 @@ const reducer = createReducer(initialState, {
       newLoadedProducts.sort(compareName);
     } else if (newOrderBy === 'recently_added') {
       newLoadedProducts.sort(compareDate);
+    } else if (newOrderBy === 'none') {
+      newLoadedProducts.sort(compareDefault);
     }
     
     return {orderBy: newOrderBy, ...state, loadedProducts: newLoadedProducts};

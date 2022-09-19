@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { List, ListItem, ListItemButton, ListItemText, Button, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, Select, MenuItem, InputLabel, FormControl, TablePagination } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText, Button, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, Select, MenuItem, InputLabel, FormControl, TablePagination, TextField } from '@mui/material';
 import { removeProduct, selectProduct, sortProducts } from '../../redux/actions';
 import styled from 'styled-components';
 
 const ProductsList = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(4);
+  const [sortBy, setSortBy] = React.useState('');
+  const [searched, setSearched] = React.useState('');
+  const [shownProducts, setShownProducts] = React.useState([]);
+
   const dispatch = useDispatch();
   const store = useSelector((store) => {
     return store.store;
   })
-  const [sortBy, setSortBy] = React.useState('');
   const handleSortSelection = (event) => {
     setSortBy(event.target.value);
     dispatch(sortProducts(event.target.value));
@@ -22,12 +25,30 @@ const ProductsList = () => {
     setPage(newPage);
   };
 
+  useEffect(()=> {
+    setShownProducts([...store.loadedProducts]);
+  }, [store.loadedProducts])
+
+  const handleSearchChange = (event) => {
+    setSearched([event.target.value]);
+    const filteredRows = store.loadedProducts.filter((row) => {
+      return row.name.toLowerCase().includes(event.target.value.toLowerCase());
+    });
+    setShownProducts([...filteredRows]);
+  };
+
+  // const cancelSearch = () => {
+  //   setSearched("");
+  //   requestSearch(searched);
+  // };
 
   return(
     <>
+      <TextField id="search" value={searched} onChange={handleSearchChange}></TextField>
       <FormControl sx={{width: "20vw"}} size="small">
         <InputLabel id="sort-by-label">Sort by</InputLabel>
         <Select labelId="sort-by-label" id="sort-by" label="Sort by" value={sortBy} onChange={handleSortSelection}>
+          <MenuItem value={'none'}>None</MenuItem>
           <MenuItem value={'name'}>Name</MenuItem>
           <MenuItem value={'recently_added'}>Recently Added</MenuItem>
         </Select>
@@ -36,7 +57,7 @@ const ProductsList = () => {
         <Table size="small">
           <TableBody>
             {
-              store.loadedProducts && store.loadedProducts
+              shownProducts && shownProducts
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((p) => (
                   <TableRow sx={{cursor: 'pointer'}} key={p.id} onClick={() => dispatch(selectProduct(p))}>
